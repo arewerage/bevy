@@ -21,10 +21,17 @@ Depending on your graphics card, you may have to install one of the following:
 
 Compiling with clang is also possible - replace the `g++` package with `clang`.
 
-### Windows Subsystem for Linux (WSL 2)
+## Windows Subsystem for Linux (WSL 2)
 
-Graphics and audio need to be configured for them to work with WSL 2 backend.
-Please see the ubuntu [WSL documentation](https://wiki.ubuntu.com/WSL) on how to set up graphics and audio.
+Up-to-date WSL Installs for Windows 10 & 11 include WSLg, which provides
+necessary servers for passing graphics and audio between Windows and the WSL instance.
+With WSLg, a user's WSL instance can use X11 as well as Wayland.
+For more information, see WSLg [documentation](https://github.com/microsoft/wslg#wslg-architecture-overview).
+
+Prior to the release of [WSL Gui (WSLg)](https://en.wikipedia.org/wiki/Windows_Subsystem_for_Linux#WSLg)
+around 4/20/2021, users had to [manually set up servers](https://wiki.ubuntu.com/WSL#Advanced_Topics) on windows for graphic and audio.
+Make note of the date for documentation found across the internet.
+Following advice from before WSLg's release can lead to additional conflicts.
 
 ## [Fedora](https://getfedora.org/)
 
@@ -161,4 +168,25 @@ When using a NVIDIA GPU with the proprietary driver (eg. `x11-drivers/nvidia-dri
 ```bash
 sudo swupd bundle-add devpkg-alsa-lib
 sudo swupd bundle-add devpkg-libgudev
+```
+
+## [Alpine Linux](https://alpinelinux.org/)
+
+Run the following command to install `GNU C compiler, standard C development libraries, pkg-config, X11 development libraries, ALSA development libraries, eudev development libraries`:
+
+```sh
+sudo apk add gcc libc-dev pkgconf libx11-dev alsa-lib-dev eudev-dev
+```
+
+Install a GPU renderer for you graphics card. For Intel integrated GPUs:
+
+```sh
+sudo apk add mesa-vulkan-intel
+```
+
+If you have issues with `winit` such as `Failed to initialize backend!` or similar, try adding the following to your `~/.cargo/config.toml` (more information at the [issue #1818](https://github.com/rust-windowing/winit/issues/1818) of the [winit repository](https://github.com/rust-windowing/winit):
+
+```toml
+[build]
+rustflags = ["-C", "target-feature=-crt-static"]
 ```
